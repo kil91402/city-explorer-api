@@ -3,5 +3,19 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2"
-  }
+  },
+  "name": "city-explorer-api",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "city-explorer-api"
+  },
+  "author": "Ajamu Page",
+  "license": "ISC"
 }
