@@ -443,21 +443,17 @@ app.get("/weather", (request, response) => {
       city_name: data.city_name,
       lon: data.lon,
       lat: data.lat,
-      state_code: data.state_code,
-      country_code: data.country_code,
     };
   });
 
   response.send(extractedData);
 });
 
-app.get("/data", (request, response) => {
+app.get("/weather", (request, response) => {
   const { lat, lon, searchQuery } = request.query;
   const cityData = weatherData.find((data) => {
     return (
-      data.lat === lat ||
-      data.lon === lon ||
-      data.city_name.toLowerCase() === searchQuery.toLowerCase()
+      data.lat === lat || data.lon === lon || data.city_name === searchQuery
     );
   });
 
