@@ -441,8 +441,8 @@ app.get("/weather", (request, response) => {
   const extractedData = weatherData.map((data) => {
     return {
       city_name: data.city_name,
-      lon: data.lon,
-      lat: data.lat,
+      valid_date: data.valid_date,
+      description: data.lat,
     };
   });
 
@@ -453,7 +453,9 @@ app.get("/weather", (request, response) => {
   const { lat, lon, searchQuery } = request.query;
   const cityData = weatherData.find((data) => {
     return (
-      data.lat === lat || data.lon === lon || data.city_name === searchQuery
+      data.city_name === city_name ||
+      data.valid_date === valid_date ||
+      data.description === description
     );
   });
 
@@ -463,6 +465,19 @@ app.get("/weather", (request, response) => {
   } else {
     response.status(404).send("City not found.");
   }
+});
+
+class Forecast {
+  constructor(ForecastObj) {
+    this.valid_date = ForecastObj.valid_date;
+    this.description = ForecastObj.description;
+    this.city_name = ForecastObj.city_name;
+  }
+}
+
+app.get("/weather", (request, response) => {
+  let forecast = newForecast(data);
+  response.send(forecast);
 });
 
 app.listen(3000, () => {
