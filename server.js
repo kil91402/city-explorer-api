@@ -1,8 +1,6 @@
 const express = require("express");
-
-const data = require("./data/weather.json");
-
 const app = express();
+const data = require("./data/weather.json");
 
 let weatherData = [
   {
@@ -433,6 +431,14 @@ let weatherData = [
   },
 ];
 
+class Forecast {
+  constructor(ForecastObj) {
+    this.data.valid_date = ForecastObj.data.valid_date;
+    this.data.data.weather.description = ForecastObj.weather.description;
+    this.data.city_name = ForecastObj.data.city_name;
+  }
+}
+
 app.get("/", (request, response) => {
   response.send("Hello World");
 });
@@ -442,7 +448,7 @@ app.get("/weather", (request, response) => {
     return {
       city_name: data.city_name,
       valid_date: data.valid_date,
-      description: data.lat,
+      description: data.data[0].weather.description,
     };
   });
 
@@ -450,14 +456,8 @@ app.get("/weather", (request, response) => {
 });
 
 app.get("/weather", (request, response) => {
-  const { lat, lon, searchQuery } = request.query;
-  const cityData = weatherData.find((data) => {
-    return (
-      data.city_name === city_name ||
-      data.valid_date === valid_date ||
-      data.description === description
-    );
-  });
+  const { city } = request.params;
+  const cityData = weatherData.find((data) => data.city_name === city);
 
   if (cityData) {
     const { city_name, lon, lat } = cityData;
@@ -467,17 +467,16 @@ app.get("/weather", (request, response) => {
   }
 });
 
-class Forecast {
-  constructor(ForecastObj) {
-    this.valid_date = ForecastObj.valid_date;
-    this.description = ForecastObj.description;
-    this.city_name = ForecastObj.city_name;
-  }
-}
-
 app.get("/weather", (request, response) => {
-  let forecast = newForecast(data);
-  response.send(forecast);
+  const { city } = request.params;
+  const cityData = weatherData.find((data) => data.city_name === city);
+
+  if (cityData) {
+    const forecast = cityData.data.map((data) => new Forecast(data));
+    response.send(forecast);
+  } else {
+    response.status(404).send("City not found.");
+  }
 });
 
 app.listen(3000, () => {
