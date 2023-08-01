@@ -455,19 +455,19 @@ app.get("/weather", (request, response) => {
   response.send(extractedData);
 });
 
-app.get("/weather", (request, response) => {
+app.get("/weather/:city", (request, response) => {
   const { city } = request.params;
   const cityData = weatherData.find((data) => data.city_name === city);
 
   if (cityData) {
-    const { city_name, lon, lat } = cityData;
-    response.send({ city_name, lon, lat });
+    const { city_name, valid_date, description } = cityData;
+    response.send({ city_name, valid_date, description });
   } else {
     response.status(404).send("City not found.");
   }
 });
 
-app.get("/weather", (request, response) => {
+app.get("/weather/:city", (request, response) => {
   const { city } = request.params;
   const cityData = weatherData.find((data) => data.city_name === city);
 
