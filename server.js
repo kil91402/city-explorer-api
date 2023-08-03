@@ -1,55 +1,39 @@
 const express = require("express");
-const cors = require("cors");
 const app = express();
+const cors = require("cors");
+const fs = require("fs");
 
-const data = require("./data/weather.json");
+app.use(express.json());
+
+const weatherData = JSON.parse(fs.readFileSync("data/weather.json", "utf8"));
 
 class Forecast {
-  constructor(ForecastObj) {
-    this.data.valid_date = ForecastObj.data.valid_date;
-    this.data.data.weather.description = ForecastObj.weather.description;
-    this.data.city_name = ForecastObj.data.city_name;
+  constructor(date, description) {
+    this.date = date;
+    this.description = description;
   }
 }
 
-app.get("/", (request, response) => {
-  response.send("Hello World");
-});
+app.get("/weather", (req, res) => {
+  const { lat, lon, searchQuery } = req.query;
 
-app.get("/weather", (request, response) => {
-  const extractedData = data.map((data) => {
-    return {
-      city_name: data.city_name,
-      valid_date: data.data[0].valid_date,
-      description: data.data[0].weather.description,
-    };
+  const cityData = weatherData.find(
+    (city) =>
+      (lat && lon && city.lat === lat && city.lon === lon) ||
+      (searchQuery &&
+        city.city_name.toLowerCase() === searchQuery.toLowerCase())
+  );
+
+  if (!cityData) {
+    return res.status(404).json({ error: "City not found" });
+  }
+
+  const forecasts = cityData.data.map((data) => {
+    const forecast = new Forecast(data.datetime, data.weather.description);
+    return forecast;
   });
 
-  response.send(extractedData);
-});
-
-app.get("/weather/:city", (request, response) => {
-  const { city } = request.params;
-  const cityData = data.find((data) => data.city_name === city);
-
-  if (cityData) {
-    const { city_name, valid_date, description } = cityData;
-    response.send({ city_name, valid_date, description });
-  } else {
-    response.status(404).send("City not found.");
-  }
-});
-
-app.get("/weather/:city", (request, response) => {
-  const { city } = request.params;
-  const cityData = data.find((data) => data.city_name === city);
-
-  if (cityData) {
-    const forecast = cityData.data.map((data) => new Forecast(data));
-    response.send(forecast);
-  } else {
-    response.status(404).send("City not found.");
-  }
+  res.json(forecasts);
 });
 
 app.listen(3000, () => {
