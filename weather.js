@@ -1,53 +1,56 @@
-import React, { useState } from "react";
+import React, { Component } from "react";
 import axios from "axios";
-import Weather from "./weather";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./server";
+import { ListGroup } from "react-bootstrap";
 
-const App = () => {
-  const [city, setCity] = useState("");
-  const [forecasts, setForecasts] = useState([]);
+class Weather extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      forecast: [],
+      error: null,
+    };
+  }
 
-  const handleCitySearch = async () => {
-    try {
-      const response = await axios.get("/weather", {
+  componentDidMount() {
+    const { locationLat, locationLon, locationDisplayName } = this.props;
+
+    axios
+      .get("/weather", {
         params: {
-          searchQuery: city,
+          lat: locationLat,
+          lon: locationLon,
+          searchQuery: locationDisplayName,
         },
+      })
+      .then((response) => {
+        this.setState({ forecast: response.data, error: null });
+      })
+      .catch((error) => {
+        this.setState({ error: error.response.data.error });
       });
+  }
 
-      setForecasts(response.data);
-    } catch (error) {
-      console.error("Error fetching weather data:", error);
-    }
-  };
+  render() {
+    const { forecast, error } = this.state;
 
-  return (
-    <div className="container mt-4">
-      <div className="row">
-        <div className="col-md-6">
-          <div className="input-group mb-3">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Enter city name"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-            />
-            <button
-              className="btn btn-primary"
-              type="button"
-              onClick={handleCitySearch}
-            >
-              Search
-            </button>
+    return (
+      <>
+        {error && <div className="error">{error}</div>}
+        {forecast.length > 0 && (
+          <div className="main">
+            <h2>Weather Forecast</h2>
+            <ListGroup>
+              {forecast.map((item, index) => (
+                <ListGroup.Item key={index}>
+                  <strong>{item.date}:</strong> {item.description}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
           </div>
-        </div>
-      </div>
-
-      {forecasts.length > 0 && <Weather forecasts={forecasts} />}
-    </div>
-  );
-};
+        )}
+      </>
+    );
+  }
+}
 
 export default Weather;
