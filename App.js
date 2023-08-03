@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import Weather from "./Weather";
+import Weather from "./weather";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./server";
 
 const App = () => {
   const [city, setCity] = useState("");
