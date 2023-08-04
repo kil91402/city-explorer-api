@@ -2,9 +2,10 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const fs = require("fs");
-const weatherData = require("./weather.json");
 
 app.use(express.json());
+
+const weatherData = JSON.parse(fs.readFileSync("data/weather.json", "utf8"));
 
 class Forecast {
   constructor(date, description) {
@@ -13,28 +14,26 @@ class Forecast {
   }
 }
 
-module.exports = Forecast;
-
 app.get("/weather", (req, res) => {
   const { lat, lon, searchQuery } = req.query;
-  const cityData = weatherData.find((city) => {
-    return (
-      city.lat === parseFloat(lat) &&
-      city.lon === parseFloat(lon) &&
-      city.city_name.toLowerCase() === searchQuery.toLowerCase()
-    );
-  });
+
+  const cityData = weatherData.find(
+    (city) =>
+      (lat && lon && city.lat === lat && city.lon === lon) ||
+      (searchQuery &&
+        city.city_name.toLowerCase() === searchQuery.toLowerCase())
+  );
 
   if (!cityData) {
-    return res.status(404).json({ error: "City not found in weather data." });
+    return res.status(404).json({ error: "City not found" });
   }
 
-  const forecast = cityData.forecast.map((item) => ({
-    date: item.date,
-    description: item.description,
-  }));
+  const forecasts = cityData.data.map((data) => {
+    const forecast = new Forecast(data.datetime, data.weather.description);
+    return forecast;
+  });
 
-  res.json(forecast);
+  res.json(forecasts);
 });
 
 app.listen(3000, () => {
