@@ -18,11 +18,7 @@ class Forecast {
 // app.get("/weather", (req, res) => {
 //   const { lat, lon, searchQuery } = req.query;
 
-//   const cityData = weatherData.find(
-//     (city) =>
-//       (lat && lon && city.lat === lat && city.lon === lon) ||
-//       (searchQuery &&
-//         city.city_name.toLowerCase() === searchQuery.toLowerCase())
+//
 //   );
 
 //   if (!cityData) {
@@ -34,20 +30,41 @@ class Forecast {
 //   return forecast;
 // });
 
-app.get("/weather", async (req, res) => {
-  const { lat, lon, searchQuery } = req.query;
+app.get("/", (request, response) => {
+  response.send("Hello World");
+});
 
-  if (!lat || !lon) {
+app.get("/weather", async (req, res) => {
+  const { locationLat, locationLon, searchQuery } = req.query;
+  const cityData = weatherData.find(
+    (city) =>
+      (locationLat && locationLon && city.lat === lat && city.lon === lon) ||
+      (searchQuery &&
+        city.city_name.toLowerCase() === searchQuery.toLowerCase())
+  );
+
+  if (!locationLat || !locationLon) {
     return res.status(400).json({ error: "Missing query parameters." });
   }
 
   try {
     const weatherApiKey = process.env.WEATHER_API_KEY;
-    const apiUrl = `https://api.weatherbit.io/v2.0/current?lat=${lat}&lon=${lon}&key=${weatherApiKey}`;
-    const apiResponse = await axios.get(apiUrl);
+    //const apiUrl = `https://api.weatherbit.io/v2.0/forecast/daily`;
+    const apiResponse = await axios.get(
+      `https://api.weatherbit.io/v2.0/forecast/daily/${process.env.WEATHER_API_KEY}/${req.query.data.lat},${req.query.data.lon}`,
+      {
+        params: {
+          city_name: city_name,
+          locationLat: lat,
+          locationLon: lon,
+          key: process.env.WEATHER_API_KEY,
+          days: 3,
+        },
+      }
+    );
 
     const forecast = apiResponse.data.forecast.map((item) => {
-      return new Forecast(item.date, item.description);
+      return new Forecast(item.datetime, item.weather.description);
     });
 
     res.json(forecast);
