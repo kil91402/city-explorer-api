@@ -8,8 +8,6 @@ app.use(express.json());
 
 const weatherData = JSON.parse(fs.readFileSync("data/weather.json", "utf8"));
 
-// ... (existing code)
-
 class Forecast {
   constructor(date, description) {
     this.date = date;
