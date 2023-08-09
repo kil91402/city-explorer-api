@@ -39,6 +39,12 @@ class Weather extends Component {
     this.setState({ showResults: true });
   };
 
+  handleGetWeather = () => {
+    const url = `https://localhost:3000/weather`;
+    const result = axios.get(url);
+    console.log(result.data);
+  };
+
   render() {
     const { forecast, error, showResults } = this.state;
 
