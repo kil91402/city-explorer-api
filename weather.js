@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { ListGroup } from "react-bootstrap";
+import { ListGroup, Button } from "react-bootstrap";
 
 class Weather extends Component {
   constructor(props) {
@@ -8,10 +8,15 @@ class Weather extends Component {
     this.state = {
       forecast: [],
       error: null,
+      showResults: false,
     };
   }
 
   componentDidMount() {
+    this.fetchWeatherData();
+  }
+
+  fetchWeatherData() {
     const { locationLat, locationLon, locationDisplayName } = this.props;
 
     axios
@@ -30,13 +35,17 @@ class Weather extends Component {
       });
   }
 
+  handleShowResults = () => {
+    this.setState({ showResults: true });
+  };
+
   render() {
-    const { forecast, error } = this.state;
+    const { forecast, error, showResults } = this.state;
 
     return (
       <>
         {error && <div className="error">{error}</div>}
-        {forecast.length > 0 && (
+        {showResults && forecast.length > 0 && (
           <div className="main">
             <h2>Weather Forecast</h2>
             <ListGroup>
@@ -48,6 +57,7 @@ class Weather extends Component {
             </ListGroup>
           </div>
         )}
+        <Button onClick={this.handleShowResults}>Weather Forecast</Button>
       </>
     );
   }
