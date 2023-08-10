@@ -25,6 +25,7 @@ app.get("/weather", async (req, res) => {
   const locationLat = req.query.lat;
   const locationLon = req.query.lon;
   const searchQuery = req.query.searchQuery;
+
   console.log(locationLat, locationLon, searchQuery);
   // const cityData = weatherData.find(
   //   (city) =>
@@ -42,15 +43,15 @@ app.get("/weather", async (req, res) => {
   console.log("hello");
   try {
     const weatherApiKey = process.env.WEATHER_API_KEY;
+    let url = `https://api.weatherbit.io/v2.0/forecast/daily?lat=${locationLat}&lon=${locationLon}&key=${weatherApiKey}&days=3`;
     console.log("hello again");
     console.log(
       `https://api.weatherbit.io/v2.0/forecast/daily?lat=${locationLat}&lon=${locationLon}&key=${weatherApiKey}&days=3`
     );
-    const apiResponse = await axios.get(
-      `https://api.weatherbit.io/v2.0/forecast/daily?lat=${locationLat}&lon=${locationLon}&key=${weatherApiKey}&days=3`
-    );
 
-    console.log(apiResponse);
+    const apiResponse = await axios.get(url);
+
+    console.log("hello there");
     const forecast = apiResponse.data.data.map((item) => {
       return new Forecast(item.datetime, item.weather.description);
     });
