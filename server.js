@@ -51,6 +51,14 @@ app.get("/weather", async (req, res) => {
   }
 });
 
+class Movie {
+  constructor(title, release_date, overview) {
+    this.title = title;
+    this.release_date = release_date;
+    this.overview = overview;
+  }
+}
+
 app.get("/movies", async (req, res) => {
   const searchQuery = req.query.city;
   if (!searchQuery) {
@@ -63,11 +71,7 @@ app.get("/movies", async (req, res) => {
     const apiResponse = await axios.get(url);
 
     const movies = apiResponse.data.results.map((movie) => {
-      return {
-        title: movie.title,
-        release_date: movie.release_date,
-        overview: movie.overview,
-      };
+      return new Movie(movie.title, movie.release_date, movie.overview);
     });
 
     res.json(movies);
