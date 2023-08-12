@@ -7,8 +7,6 @@ require("dotenv").config();
 app.use(cors());
 app.use(express.json());
 
-//let weatherData = JSON.parse(fs.readFileSync("data/weather.json", "utf8"));
-
 class Forecast {
   constructor(date, description) {
     this.date = date;
@@ -21,21 +19,11 @@ app.get("/", (request, response) => {
 });
 
 app.get("/weather", async (req, res) => {
-  //const { locationLat, locationLon, searchQuery } = req.query;
   const locationLat = req.query.lat;
   const locationLon = req.query.lon;
   const searchQuery = req.query.searchQuery;
 
   console.log(locationLat, locationLon, searchQuery);
-  // const cityData = weatherData.find(
-  //   (city) =>
-  //     (locationLat &&
-  //       locationLon &&
-  //       city.lat === locationLat &&
-  //       city.lon === locationLon) ||
-  //     (searchQuery &&
-  //       city.city_name.toLowerCase() === searchQuery.toLowerCase())
-  // );
 
   if (!locationLat || !locationLon) {
     return res.status(400).json({ error: "Missing query parameters." });
@@ -43,12 +31,12 @@ app.get("/weather", async (req, res) => {
   console.log("hello");
   try {
     const weatherApiKey = process.env.WEATHER_API_KEY;
-    let url = `https://api.weatherbit.io/v2.0/forecast/daily?lat=${locationLat}&lon=${locationLon}&key=${weatherApiKey}&days=3`;
+    let url = `https://api.weatherbit.io/v2.0/forecast/daily?lat=${locationLat}&lon=${locationLon}&key=${weatherApiKey}&days=16`;
     console.log("hello again");
     console.log(
-      `https://api.weatherbit.io/v2.0/forecast/daily?lat=${locationLat}&lon=${locationLon}&key=${weatherApiKey}&days=3`
+      `https://api.weatherbit.io/v2.0/forecast/daily?lat=${locationLat}&lon=${locationLon}&key=${weatherApiKey}&days=16`
     );
-
+    console.log("how are you");
     const apiResponse = await axios.get(url);
 
     console.log("hello there");
