@@ -52,15 +52,16 @@ app.get("/weather", async (req, res) => {
 });
 
 class Movie {
-  constructor(title, release_date, overview) {
+  constructor(title, release_date, overview, imgURL) {
     this.title = title;
     this.release_date = release_date;
     this.overview = overview;
+    this.imgURL = imgURL;
   }
 }
 
 app.get("/movies", async (req, res) => {
-  const searchQuery = req.query.city;
+  const searchQuery = req.query.searchQuery;
   if (!searchQuery) {
     return res.status(400).json({ error: "Missing query parameters." });
   }
@@ -71,7 +72,12 @@ app.get("/movies", async (req, res) => {
     const apiResponse = await axios.get(url);
 
     const movies = apiResponse.data.results.map((movie) => {
-      return new Movie(movie.title, movie.release_date, movie.overview);
+      return new Movie(
+        movie.title,
+        movie.release_date,
+        movie.overview,
+        movie.imgURL
+      );
     });
 
     res.json(movies);
