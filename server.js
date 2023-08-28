@@ -61,7 +61,7 @@ class Movie {
 }
 
 app.get("/movies", async (req, res) => {
-  const searchQuery = req.query.query; // Use "query" instead of "searchQuery"
+  const searchQuery = req.query.query;
   if (!searchQuery) {
     return res.status(400).json({ error: "Missing query parameters." });
   }
