@@ -56,7 +56,7 @@ class Movie {
     this.title = title;
     this.release_date = release_date;
     this.overview = overview;
-    this.imgURL = imgURL;
+    this.poster_path = imgURL;
   }
 }
 
@@ -76,7 +76,7 @@ app.get("/movies", async (req, res) => {
         movie.title,
         movie.release_date,
         movie.overview,
-        movie.imgURL
+        movie.poster_path
       );
     });
 
