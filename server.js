@@ -87,33 +87,6 @@ app.get("/movies", async (req, res) => {
   }
 });
 
-app.get("/movies", async (req, res) => {
-  const searchQuery = req.query.query;
-  if (!searchQuery) {
-    return res.status(400).json({ error: "Missing query parameters." });
-  }
-
-  try {
-    const movieApiKey = process.env.MOVIE_API_KEY;
-    let url = `https://api.themoviedb.org/3/search/movie?api_key=${movieApiKey}&query=${searchQuery}`;
-    const apiResponse = await axios.get(url);
-
-    const movies = apiResponse.data.results.map((movie) => {
-      return new Movie(
-        movie.title,
-        movie.release_date,
-        movie.overview,
-        movie.imgURL
-      );
-    });
-
-    res.json(movies);
-  } catch (error) {
-    console.error("Error fetching movie data:", error.message);
-    return res.status(500).json({ error: "Failed to fetch movie data." });
-  }
-});
-
 app.listen(3000, () => {
   console.log("Listen on the port 3000...");
 });
