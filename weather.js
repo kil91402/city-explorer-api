@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-const axios = require('axios');
-const Forecast = require('./models/Forecast'); // Make sure to adjust the path accordingly
+const axios = require("axios");
+const Forecast = require("./models/Forecast");
 
 async function getWeather(locationLat, locationLon) {
   try {
@@ -15,10 +15,8 @@ async function getWeather(locationLat, locationLon) {
 
     return forecast;
   } catch (error) {
-    throw new Error('Failed to fetch weather data.');
+    throw new Error("Failed to fetch weather data.");
   }
 }
 
 module.exports = { getWeather };
-
-
